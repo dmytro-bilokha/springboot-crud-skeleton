@@ -34,9 +34,8 @@ public class PersistanceJPAConfig extends JpaBaseConfiguration {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setDataSource(dataSource());
 		em.setPackagesToScan(new String[] { "bilokhado.phonebook.entity" });
-		em.setPersistenceUnitName("phonebookSQLPU");
+		// em.setPersistenceUnitName("phonebookSQLPU");
 		em.setJpaVendorAdapter(createJpaVendorAdapter());
-		em.setJpaProperties(additionalProperties());
 		return em;
 	}
 
@@ -66,23 +65,17 @@ public class PersistanceJPAConfig extends JpaBaseConfiguration {
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 		return new PersistenceExceptionTranslationPostProcessor();
 	}
-
-	Properties additionalProperties() {
-		Properties properties = new Properties();
-		properties.setProperty("javax.persistence.schema-generation.database.action", "drop-and-create");
-		properties.setProperty("javax.persistence.schema-generation.create-source", "script");
-		properties.setProperty("javax.persistence.schema-generation.drop-source", "script");
-		properties.setProperty("javax.persistence.schema-generation.create-script-source", "META-INF/create.sql");
-		properties.setProperty("javax.persistence.schema-generation.drop-script-source", "META-INF/drop.sql");
-		properties.setProperty("javax.persistence.sql-load-script-source", "META-INF/load.sql");
-		properties.setProperty("eclipselink.ddl-generation", "create-drop");
-		return properties;
-	}
-
+	
 	@Override
 	protected Map<String, Object> getVendorProperties() {
 		Map<String, Object> vendorProperties = new HashMap<>();
 		vendorProperties.put(PersistenceUnitProperties.WEAVING, detectWeavingMode());
+		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DATABASE_ACTION, "drop-and-create");
+		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_CREATE_SOURCE, "script");
+		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DROP_SOURCE, "script");
+		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_CREATE_SCRIPT_SOURCE, "META-INF/create.sql");
+		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DROP_SCRIPT_SOURCE, "META-INF/drop.sql");
+		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_SQL_LOAD_SCRIPT_SOURCE, "META-INF/load.sql");
 		return vendorProperties;
 	}
 
