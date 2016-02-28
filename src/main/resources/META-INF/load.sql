@@ -1,3 +1,3 @@
 LOCK TABLES `user` WRITE;
-INSERT INTO `user` VALUES (NULL, 'user', '0000', '0000', 'test user');
+INSERT INTO `user` VALUES (NULL, 'user', '$2a$10$04TVADrR6/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y', 'test user');
 UNLOCK TABLES;

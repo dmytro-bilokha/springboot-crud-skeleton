@@ -1,21 +1,20 @@
 package bilokhado.phonebook.entity;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.NamedNativeQuery;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "user")
+@NamedQuery(name = "User.findByLogin", query = "SELECT ur FROM User ur WHERE ur.login = :login")
 public class User implements Serializable {
+
 	private static final long serialVersionUID = 1L;
 
 	@Id
@@ -27,10 +26,7 @@ public class User implements Serializable {
 	private String login;
 
 	@Column(name = "password_hash")
-	private byte[] passwordHash;
-
-	@Column(name = "password_salt")
-	private byte[] passwordSalt;
+	private String passwordHash;
 
 	@Column(name = "full_name")
 	private String fullName;
@@ -51,20 +47,12 @@ public class User implements Serializable {
 		this.login = login;
 	}
 
-	public byte[] getPasswordHash() {
+	public String getPasswordHash() {
 		return passwordHash;
 	}
 
-	public void setPasswordHash(byte[] passwordHash) {
+	public void setPasswordHash(String passwordHash) {
 		this.passwordHash = passwordHash;
-	}
-
-	public byte[] getPasswordSalt() {
-		return passwordSalt;
-	}
-
-	public void setPasswordSalt(byte[] passwordSalt) {
-		this.passwordSalt = passwordSalt;
 	}
 
 	public String getFullName() {
