@@ -10,8 +10,6 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +21,6 @@ public class PhonebookApplication {
 	private static final String DEFAULT_CONFIG_FILE = "defaultconfig.properties";
 
 	private static final Logger logger = LoggerFactory.getLogger(PhonebookApplication.class);
-
-	@RequestMapping("/")
-	@ResponseBody
-	String home() {
-		return "Hello World!";
-	}
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication springApplication = new SpringApplication(new Object[] { PhonebookApplication.class });
