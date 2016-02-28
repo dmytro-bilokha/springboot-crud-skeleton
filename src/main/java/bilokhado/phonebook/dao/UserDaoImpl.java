@@ -1,5 +1,7 @@
 package bilokhado.phonebook.dao;
 
+import java.util.List;
+
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -17,8 +19,8 @@ public class UserDaoImpl implements UserDao {
 	@Override
 	public User findByUserName(String login) {
 		TypedQuery<User> userQuery = em.createNamedQuery("User.findByLogin", User.class);
-		User user = userQuery.setParameter("login", login).getSingleResult();
-		return user;
+		List<User> users = userQuery.setParameter("login", login).getResultList();
+		return users.isEmpty() ? null : users.get(0);
 	}
 
 }
