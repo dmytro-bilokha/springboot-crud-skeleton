@@ -23,25 +23,21 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
-@ConditionalOnProperty(prefix = "db", value = "type", havingValue = "SQL")
-public class PersistanceJpaSqlConfig extends JpaBaseConfiguration {
+@ConditionalOnProperty(prefix = "db", value = "type", havingValue = "XML")
+public class PersistenceJpaXmlConfig extends JpaBaseConfiguration {
 
 	@Bean
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
 		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
-		em.setDataSource(dataSource());
-		em.setPackagesToScan(new String[] { "bilokhado.phonebook.entity.sql" });
+		em.setPackagesToScan(new String[] { "bilokhado.phonebook.entity.xml" });
 		em.setJpaVendorAdapter(createJpaVendorAdapter());
+		em.setPersistenceUnitName("XML");
 		return em;
 	}
 
 	@Bean
 	public DataSource dataSource() {
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
-		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
-		dataSource.setUrl("jdbc:mysql://localhost:3306/phonebook");
-		dataSource.setUsername("www");
-		dataSource.setPassword("world-wide-wlak");
 		return dataSource;
 	}
 
@@ -56,7 +52,12 @@ public class PersistanceJpaSqlConfig extends JpaBaseConfiguration {
 	protected AbstractJpaVendorAdapter createJpaVendorAdapter() {
 		return new EclipseLinkJpaVendorAdapter();
 	}
-
+	
+	@Override
+	protected String[] getPackagesToScan() {
+		return new String[] { "bilokhado.entity.xml" };
+	}
+	
 	@Bean
 	public PersistenceExceptionTranslationPostProcessor exceptionTranslation() {
 		return new PersistenceExceptionTranslationPostProcessor();
@@ -67,11 +68,12 @@ public class PersistanceJpaSqlConfig extends JpaBaseConfiguration {
 		Map<String, Object> vendorProperties = new HashMap<>();
 		vendorProperties.put(PersistenceUnitProperties.WEAVING, detectWeavingMode());
 		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DATABASE_ACTION, "drop-and-create");
-		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_CREATE_SOURCE, "script");
-		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DROP_SOURCE, "script");
-		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_CREATE_SCRIPT_SOURCE, "META-INF/create.sql");
-		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DROP_SCRIPT_SOURCE, "META-INF/drop.sql");
-		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_SQL_LOAD_SCRIPT_SOURCE, "META-INF/load.sql");
+		vendorProperties.put(PersistenceUnitProperties.TARGET_DATABASE,
+				"org.eclipse.persistence.eis.adapters.xmlfile.XMLFilePlatform");
+		vendorProperties.put("eclipselink.nosql.connection-spec",
+				"org.eclipse.persistence.eis.adapters.xmlfile.XMLFileEISConnectionSpec");
+		vendorProperties.put("eclipselink.nosql.property.directory", "/usr/home/dimon/temp/");
+		vendorProperties.put("eclipselink.logging.level", "FINEST");
 		return vendorProperties;
 	}
 

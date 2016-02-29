@@ -1,38 +1,29 @@
-package bilokhado.phonebook.entity.sql;
+package bilokhado.phonebook.entity.xml;
 
 import java.io.Serializable;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
-import javax.persistence.Table;
+import javax.persistence.PersistenceContext;
 
+import org.eclipse.persistence.nosql.annotations.NoSql;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 
 import bilokhado.phonebook.entity.User;
 
+@NoSql
 @Entity
-@Table(name = "user")
-@NamedQuery(name = "User.findByLogin", query = "SELECT user FROM SqlUser user WHERE user.login = :login")
-public class SqlUser implements Serializable, User {
+@NamedQuery(name = "User.findByLogin", query = "SELECT user FROM XmlUser user WHERE user.login = :login")
+public class XmlUser implements Serializable, User {
 
 	private static final long serialVersionUID = 1L;
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name = "id", updatable = false, nullable = false)
 	private int id;
-
-	@Column(name = "login")
+	
 	private String login;
-
-	@Column(name = "password_hash")
 	private String passwordHash;
-
-	@Column(name = "full_name")
 	private String fullName;
 
 	public int getId() {

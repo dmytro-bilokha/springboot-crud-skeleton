@@ -5,16 +5,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.data.jpa.JpaRepositoriesAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-@SpringBootApplication
+@SpringBootApplication//(exclude={DataSourceAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
 public class PhonebookApplication {
 
 	private static final String CONFIG_FILE_NAME_PROPERTY = "lordi.conf";
