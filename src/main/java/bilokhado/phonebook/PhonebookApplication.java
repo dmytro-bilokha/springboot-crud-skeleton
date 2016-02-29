@@ -29,6 +29,8 @@ public class PhonebookApplication {
 		String externalPropertiesFileName = System.getProperty(CONFIG_FILE_NAME_PROPERTY);
 		if (externalPropertiesFileName != null)
 			propertiesResources.add(new PathResource(externalPropertiesFileName));
+		else
+			logger.info("External properties file name is null, ignoring external properties");
 		loadProperties(springApplication, propertiesResources);
 		springApplication.run(args);
 		logger.info("Application started!");
