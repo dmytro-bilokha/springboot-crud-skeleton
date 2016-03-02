@@ -9,6 +9,7 @@ import javax.sql.DataSource;
 import org.eclipse.persistence.config.PersistenceUnitProperties;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
+import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
@@ -27,12 +28,20 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 public class PersistenceJpaXmlConfig extends JpaBaseConfiguration {
 
 	@Bean
-	public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
-		LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
+	@Override
+	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder factoryBuilder) {
+		/*LocalContainerEntityManagerFactoryBean em = new LocalContainerEntityManagerFactoryBean();
 		em.setPackagesToScan(new String[] { "bilokhado.phonebook.entity.xml" });
 		em.setJpaVendorAdapter(createJpaVendorAdapter());
 		em.setPersistenceUnitName("XML");
-		return em;
+		em.setMappingResources(new String[] { "META-INF/xmluser-orm.xml" });
+		return em;*/
+		Map<String, Object> vendorProperties = getVendorProperties();
+		customizeVendorProperties(vendorProperties);
+		LocalContainerEntityManagerFactoryBean emf = factoryBuilder.dataSource(dataSource()).packages(getPackagesToScan()).persistenceUnit("SQL")
+				.properties(vendorProperties).jta(isJta()).build();
+		emf.setMappingResources(new String[] { "META-INF/xmluser-orm.xml" });
+		return emf;
 	}
 
 	@Bean
@@ -67,7 +76,7 @@ public class PersistenceJpaXmlConfig extends JpaBaseConfiguration {
 	protected Map<String, Object> getVendorProperties() {
 		Map<String, Object> vendorProperties = new HashMap<>();
 		vendorProperties.put(PersistenceUnitProperties.WEAVING, detectWeavingMode());
-		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DATABASE_ACTION, "drop-and-create");
+		//vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DATABASE_ACTION, "drop-and-create");
 		vendorProperties.put(PersistenceUnitProperties.TARGET_DATABASE,
 				"org.eclipse.persistence.eis.adapters.xmlfile.XMLFilePlatform");
 		vendorProperties.put("eclipselink.nosql.connection-spec",
