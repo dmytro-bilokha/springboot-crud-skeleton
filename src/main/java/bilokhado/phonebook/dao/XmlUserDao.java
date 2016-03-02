@@ -5,8 +5,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -14,10 +12,6 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -26,6 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import bilokhado.phonebook.configuration.properties.XmlStorageProperties;
+import bilokhado.phonebook.entity.SqlUser;
 import bilokhado.phonebook.entity.User;
 import bilokhado.phonebook.entity.XmlUser;
 
@@ -43,6 +38,19 @@ public class XmlUserDao implements UserDao {
 	@Override
 	public User findByUserName(String username) {
 		return xmlUsersWrapper.users.get(username);
+	}
+	
+	@Override
+	public User createNewUser() {
+		return new XmlUser();
+	}
+	
+	@Override 
+	public void persistUser(User user) {
+		if (!(user instanceof XmlUser))
+			throw new IllegalArgumentException("Method supports only XmlUser type, but got object " + user);
+		XmlUser sqlUser = (XmlUser) user;
+		xmlUsersWrapper.users.put(sqlUser.getLogin(), sqlUser);
 	}
 
 	@PostConstruct

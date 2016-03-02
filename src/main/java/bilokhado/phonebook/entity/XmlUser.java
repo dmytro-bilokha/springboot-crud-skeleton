@@ -2,6 +2,8 @@ package bilokhado.phonebook.entity;
 
 import java.io.Serializable;
 
+import javax.xml.bind.annotation.XmlTransient;
+
 public class XmlUser implements Serializable, User {
 
 	private static final long serialVersionUID = 1L;
@@ -9,6 +11,17 @@ public class XmlUser implements Serializable, User {
 	private String login;
 	private String passwordHash;
 	private String fullName;
+	
+	private String uid = "XML-TEST";
+	
+	@XmlTransient
+	public String getUid() {
+		return uid;
+	}
+
+	public void setUid(String uid) {
+		this.uid = uid;
+	}
 
 	public String getLogin() {
 		return login;
