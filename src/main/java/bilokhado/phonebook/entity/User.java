@@ -2,10 +2,6 @@ package bilokhado.phonebook.entity;
 
 public interface User {
 
-	public int getId();
-
-	public void setId(int id);
-
 	public String getLogin();
 
 	public void setLogin(String login);

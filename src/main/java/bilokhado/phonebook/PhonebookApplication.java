@@ -15,7 +15,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.PathResource;
 import org.springframework.core.io.Resource;
 
-@SpringBootApplication//(exclude={DataSourceAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
+@SpringBootApplication(exclude={DataSourceAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
 public class PhonebookApplication {
 
 	private static final String CONFIG_FILE_NAME_PROPERTY = "lordi.conf";

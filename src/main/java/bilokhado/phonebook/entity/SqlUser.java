@@ -1,4 +1,4 @@
-package bilokhado.phonebook.entity.sql;
+package bilokhado.phonebook.entity;
 
 import java.io.Serializable;
 
@@ -9,10 +9,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
-import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
-
-import bilokhado.phonebook.entity.User;
 
 @Entity
 @Table(name = "user")
@@ -92,7 +88,7 @@ public class SqlUser implements Serializable, User {
 
 	@Override
 	public String toString() {
-		return "User [id=" + id + ", login=" + login + "]";
+		return "SqlUser [id=" + id + ", login=" + login + "]";
 	}
 
 }

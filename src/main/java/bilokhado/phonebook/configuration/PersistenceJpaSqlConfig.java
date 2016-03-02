@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
+import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -26,6 +27,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @Configuration
 @EnableTransactionManagement
+@EntityScan("bilokhado.phonebook.entity")
 @ConditionalOnProperty(prefix = "db", value = "type", havingValue = "SQL")
 public class PersistenceJpaSqlConfig extends JpaBaseConfiguration {
 
@@ -47,7 +49,7 @@ public class PersistenceJpaSqlConfig extends JpaBaseConfiguration {
 		customizeVendorProperties(vendorProperties);
 		LocalContainerEntityManagerFactoryBean emf = factoryBuilder.dataSource(dataSource()).packages(getPackagesToScan()).persistenceUnit("SQL")
 				.properties(vendorProperties).jta(isJta()).build();
-		emf.setMappingResources(new String[] { "META-INF/sqluser-orm.xml" });
+		//emf.setMappingResources(new String[] { "META-INF/sqluser-orm.xml" });
 		return emf;
 	}
 

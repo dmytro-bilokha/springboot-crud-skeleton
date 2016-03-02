@@ -23,7 +23,6 @@ public class CustomUserDetailsService implements UserDetailsService {
 	@Autowired
 	private UserDao userDao;
 
-	@Transactional(readOnly = true)
 	@Override
 	public UserDetails loadUserByUsername(String login) throws UsernameNotFoundException {
 		bilokhado.phonebook.entity.User user = userDao.findByUserName(login);
