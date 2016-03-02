@@ -1,8 +1,10 @@
 package bilokhado.phonebook.dao;
 
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -11,50 +13,90 @@ import javax.annotation.PreDestroy;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Repository;
 
+import bilokhado.phonebook.configuration.properties.XmlStorageProperties;
 import bilokhado.phonebook.entity.User;
 import bilokhado.phonebook.entity.XmlUser;
 
-//@Repository
 @Component
 @ConditionalOnProperty(prefix = "db", value = "type", havingValue = "XML")
-@XmlRootElement(name = "userrepository")
 public class XmlUserDao implements UserDao {
 
-	@XmlElement(name = "users")
-	private ConcurrentMap<String, XmlUser> users = new ConcurrentHashMap<>();
+	@Autowired
+	XmlStorageProperties properties;
+
+	private XmlUsersWrapper xmlUsersWrapper;
+
+	private static final Logger logger = LoggerFactory.getLogger(XmlUserDao.class);
 
 	@Override
 	public User findByUserName(String username) {
-		return users.get(username);
+		return xmlUsersWrapper.users.get(username);
 	}
 
 	@PostConstruct
 	public void init() {
-		XmlUser mockUser = new XmlUser();
-		mockUser.setLogin("user");
-		mockUser.setPasswordHash("$2a$10$04TVADrR6/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y");
-		mockUser.setFullName("Sql user");
-		users.put("user", mockUser);
+		String inputFileName = properties.getFileName();
+		if (inputFileName != null) {
+			File inputFile = new File(inputFileName);
+			if (inputFile.isFile() && inputFile.canRead())
+				try {
+					JAXBContext context = JAXBContext.newInstance(XmlUsersWrapper.class);
+					Unmarshaller unmarshaller = context.createUnmarshaller();
+					xmlUsersWrapper = (XmlUsersWrapper) unmarshaller.unmarshal(inputFile);
+				} catch (JAXBException ex) {
+					logger.error("Failed to unmarshallize users from XML file {}", inputFileName, ex);
+					throw new RuntimeException("Failed to unmarshallize users from XML file " + inputFileName, ex);
+				}
+			else {
+				logger.warn("File {} does not exist or is not readable. Will work with empty data, try to save on exit",
+						inputFileName);
+				xmlUsersWrapper = new XmlUsersWrapper();
+			}
+		} else {
+			logger.error("XML storage file name is not set."
+					+ "All data will be stored in memory only and lost on application exit!");
+			xmlUsersWrapper = new XmlUsersWrapper();
+		}
+		/*
+		 * XmlUser mockUser = new XmlUser(); mockUser.setLogin("user");
+		 * mockUser.setPasswordHash(
+		 * "$2a$10$04TVADrR6/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y");
+		 * mockUser.setFullName("Sql user"); users.put("user", mockUser);
+		 */
+
 	}
 
 	@PreDestroy
 	public void save() {
-		try {
-			JAXBContext context = JAXBContext.newInstance(this.getClass());
-			Marshaller marshaller = context.createMarshaller();
-			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
-			marshaller.marshal(this, System.out);
-		} catch (JAXBException ex) {
-			System.out.println("OOOPS!");
-			ex.printStackTrace();
-		}
+		String outputFileName = properties.getFileName();
+		if (outputFileName != null)
+			try (FileOutputStream outStream = new FileOutputStream(outputFileName);
+					BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream);) {
+				JAXBContext context = JAXBContext.newInstance(XmlUsersWrapper.class);
+				Marshaller marshaller = context.createMarshaller();
+				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				marshaller.marshal(xmlUsersWrapper, bufOutStream);
+			} catch (JAXBException ex) {
+				logger.error("Failed to marshallize users to XML file {}", outputFileName, ex);
+			} catch (FileNotFoundException ex) {
+				logger.error("Unable to find XML file {}", outputFileName, ex);
+			} catch (IOException ex) {
+				logger.error("Unable to write XML file {}. Input/Output exception thrown", outputFileName, ex);
+			}
+		else
+			logger.error("XML storage file name is not set. All data will be lost!");
 	}
 
 }
