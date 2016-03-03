@@ -2,6 +2,8 @@ package bilokhado.phonebook.controller;
 
 import java.util.Arrays;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -39,7 +41,9 @@ public class RegisterController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String registerUser(@ModelAttribute("user") User user, BindingResult result, Model model) {
+	public String registerUser(@ModelAttribute("user") @Valid User user, BindingResult result, Model model) {
+		if (result.hasErrors())
+			return "/register";
 		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userDao.persistUser(user);
 		Authentication auth = new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword(),

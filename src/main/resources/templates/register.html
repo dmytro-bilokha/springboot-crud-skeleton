@@ -13,6 +13,9 @@
 	</div>
 	<form th:action="@{/register}" th:object="${user}" method="post">
 	    <div><label> Login: <input type="text" th:field="*{login}"/> </label></div>
+	    <div><span th:if="${#fields.hasErrors('login')}"
+				th:text="${#fields.errors('login')[0]}">Provide
+				search query</span></div>
 	    <div><label> Password: <input type="password" th:field="*{password}"/> </label></div>
 	    <div><input type="submit" value="Register"/></div>
 	</form>

@@ -9,10 +9,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Size;
 import javax.xml.bind.annotation.XmlTransient;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
 @Entity
 @Table(name = "user")
@@ -26,9 +26,13 @@ public class User implements Serializable {
 	@Column(name = "id", updatable = false, nullable = false)
 	private int id;
 
+	@NotNull
+	@Size(min = 3)
+	@Pattern(regexp = "[0-9a-zA-Z]*")
 	@Column(name = "login")
 	private String login;
 
+	@NotNull
 	@Column(name = "password_hash")
 	private String password;
 
@@ -59,7 +63,7 @@ public class User implements Serializable {
 	public void setPassword(String password) {
 		this.password = password;
 	}
-	
+
 	public String getFullName() {
 		return fullName;
 	}
