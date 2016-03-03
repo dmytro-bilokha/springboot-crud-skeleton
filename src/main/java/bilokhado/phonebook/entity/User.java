@@ -33,9 +33,12 @@ public class User implements Serializable {
 	private String login;
 
 	@NotNull
+	@Pattern(regexp = "^(?=.*\\d)(?=.*[A-Z]).{5,30}$")
 	@Column(name = "password_hash")
 	private String password;
 
+	@NotNull
+	@Size(min = 5)
 	@Column(name = "full_name")
 	private String fullName;
 

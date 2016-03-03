@@ -14,9 +14,13 @@
 	<form th:action="@{/register}" th:object="${user}" method="post">
 	    <div><label> Login: <input type="text" th:field="*{login}"/> </label></div>
 	    <div><span th:if="${#fields.hasErrors('login')}"
-				th:text="${#fields.errors('login')[0]}">Provide
-				search query</span></div>
+				th:text="${#fields.errors('login')[0]}">Login has errors</span></div>
 	    <div><label> Password: <input type="password" th:field="*{password}"/> </label></div>
+	    <div><span th:if="${#fields.hasErrors('password')}"
+				th:text="${#fields.errors('password')[0]}">Invalid password</span></div>
+	    <div><label> Full Name: <input type="text" th:field="*{fullName}"/> </label></div>
+	    <div><span th:if="${#fields.hasErrors('fullName')}"
+				th:text="${#fields.errors('fullName')[0]}">Full name has errors</span></div>
 	    <div><input type="submit" value="Register"/></div>
 	</form>
     </body>
