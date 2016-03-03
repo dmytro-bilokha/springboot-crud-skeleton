@@ -20,9 +20,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 import bilokhado.phonebook.configuration.properties.XmlStorageProperties;
-import bilokhado.phonebook.entity.SqlUser;
 import bilokhado.phonebook.entity.User;
-import bilokhado.phonebook.entity.XmlUser;
 
 @Component
 @ConditionalOnProperty(prefix = "db", value = "type", havingValue = "XML")
@@ -39,18 +37,10 @@ public class XmlUserDao implements UserDao {
 	public User findByUserName(String username) {
 		return xmlUsersWrapper.users.get(username);
 	}
-	
+
 	@Override
-	public User createNewUser() {
-		return new XmlUser();
-	}
-	
-	@Override 
 	public void persistUser(User user) {
-		if (!(user instanceof XmlUser))
-			throw new IllegalArgumentException("Method supports only XmlUser type, but got object " + user);
-		XmlUser sqlUser = (XmlUser) user;
-		xmlUsersWrapper.users.put(sqlUser.getLogin(), sqlUser);
+		xmlUsersWrapper.users.put(user.getLogin(), user);
 	}
 
 	@PostConstruct
@@ -63,6 +53,7 @@ public class XmlUserDao implements UserDao {
 					JAXBContext context = JAXBContext.newInstance(XmlUsersWrapper.class);
 					Unmarshaller unmarshaller = context.createUnmarshaller();
 					xmlUsersWrapper = (XmlUsersWrapper) unmarshaller.unmarshal(inputFile);
+					logger.info("Loaded {} users data from XML file {}", xmlUsersWrapper.users.size(), inputFileName);
 				} catch (JAXBException ex) {
 					logger.error("Failed to unmarshallize users from XML file {}", inputFileName, ex);
 					throw new RuntimeException("Failed to unmarshallize users from XML file " + inputFileName, ex);
@@ -77,13 +68,6 @@ public class XmlUserDao implements UserDao {
 					+ "All data will be stored in memory only and lost on application exit!");
 			xmlUsersWrapper = new XmlUsersWrapper();
 		}
-		/*
-		 * XmlUser mockUser = new XmlUser(); mockUser.setLogin("user");
-		 * mockUser.setPasswordHash(
-		 * "$2a$10$04TVADrR6/SPLBjsK0N30.Jf5fNjBugSACeGv1S69dZALR7lSov0y");
-		 * mockUser.setFullName("Sql user"); users.put("user", mockUser);
-		 */
-
 	}
 
 	@PreDestroy

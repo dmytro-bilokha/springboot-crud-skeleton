@@ -11,7 +11,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import bilokhado.phonebook.dao.UserDao;
 
@@ -30,7 +29,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 			logger.warn("User authentication failed for login: {}", login);
 			throw new UsernameNotFoundException("User authentication failed for login: " + login);
 		}
-		return new User(user.getLogin(), user.getPasswordHash(), Arrays.asList(new SimpleGrantedAuthority("USER")));
+		return new User(user.getLogin(), user.getPassword(), Arrays.asList(new SimpleGrantedAuthority("USER")));
 	}
 
 }

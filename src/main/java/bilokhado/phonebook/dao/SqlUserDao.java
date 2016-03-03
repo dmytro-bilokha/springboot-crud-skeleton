@@ -10,7 +10,6 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import bilokhado.phonebook.entity.SqlUser;
 import bilokhado.phonebook.entity.User;
 
 @Repository
@@ -27,17 +26,10 @@ public class SqlUserDao implements UserDao {
 		List<User> users = userQuery.setParameter("login", login).getResultList();
 		return users.isEmpty() ? null : users.get(0);
 	}
-	
-	@Override
-	public User createNewUser() {
-		return new SqlUser();
-	}
 
-	@Override 
+	@Transactional
+	@Override
 	public void persistUser(User user) {
-		if (!(user instanceof SqlUser))
-			throw new IllegalArgumentException("Method supports only SqlUser type!");
-		SqlUser sqlUser = (SqlUser) user;
-		em.persist(sqlUser);
+		em.persist(user);
 	}
 }

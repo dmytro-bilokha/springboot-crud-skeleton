@@ -2,9 +2,6 @@ package bilokhado.phonebook.controller;
 
 import java.util.Arrays;
 
-import javax.validation.Valid;
-import javax.validation.constraints.Size;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -13,12 +10,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import bilokhado.phonebook.dao.UserDao;
 import bilokhado.phonebook.entity.User;
@@ -28,10 +23,15 @@ import bilokhado.phonebook.entity.User;
 public class RegisterController {
 
 	@Autowired
-	UserDao userDao;
+	PasswordEncoder passwordEncoder;
 
 	@Autowired
-	PasswordEncoder passwordEncoder;
+	UserDao userDao;
+
+	@ModelAttribute("user")
+	public User addUser() {
+		return new User();
+	}
 
 	@RequestMapping(method = RequestMethod.GET)
 	public String getRegisterForm(Model model) {
@@ -39,14 +39,10 @@ public class RegisterController {
 	}
 
 	@RequestMapping(method = RequestMethod.POST)
-	public String registerUser(@RequestParam("login") String login, 
-			@RequestParam("password") String password) {
-		User user = userDao.createNewUser();
-		user.setLogin(login);
-		String passwordHash = passwordEncoder.encode(password);
-		user.setPasswordHash(passwordHash);
+	public String registerUser(@ModelAttribute("user") User user, BindingResult result, Model model) {
+		user.setPassword(passwordEncoder.encode(user.getPassword()));
 		userDao.persistUser(user);
-		Authentication auth = new UsernamePasswordAuthenticationToken(login, passwordHash,
+		Authentication auth = new UsernamePasswordAuthenticationToken(user.getLogin(), user.getPassword(),
 				Arrays.asList(new SimpleGrantedAuthority("USER")));
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		return "redirect:/hello";

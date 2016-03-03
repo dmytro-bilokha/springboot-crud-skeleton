@@ -8,13 +8,13 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import bilokhado.phonebook.entity.XmlUser;
+import bilokhado.phonebook.entity.User;
 
 @XmlRootElement(name = "userrepository")
 @XmlAccessorType(XmlAccessType.NONE)
 public class XmlUsersWrapper {
 	@XmlElement(name = "users")
-	ConcurrentMap<String, XmlUser> users;
+	ConcurrentMap<String, User> users;
 
 	XmlUsersWrapper() {
 		users = new ConcurrentHashMap<>();
