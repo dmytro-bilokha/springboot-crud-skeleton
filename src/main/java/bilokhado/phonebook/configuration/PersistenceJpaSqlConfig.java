@@ -74,6 +74,8 @@ public class PersistenceJpaSqlConfig extends JpaBaseConfiguration {
 	@Override
 	protected Map<String, Object> getVendorProperties() {
 		Map<String, Object> vendorProperties = new HashMap<>();
+		//Disable JPA BeanValidation, we validate by controller
+		vendorProperties.put(PersistenceUnitProperties.VALIDATION_MODE, "NONE");
 		vendorProperties.put(PersistenceUnitProperties.WEAVING, detectWeavingMode());
 		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DATABASE_ACTION, "drop-and-create");
 		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_CREATE_SOURCE, "script");
