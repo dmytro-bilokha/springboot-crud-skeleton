@@ -18,7 +18,7 @@ import org.springframework.core.io.Resource;
 @SpringBootApplication(exclude={DataSourceAutoConfiguration.class, JpaRepositoriesAutoConfiguration.class})
 public class PhonebookApplication {
 
-	private static final String CONFIG_FILE_NAME_PROPERTY = "lordi.conf";
+	private static final String CONFIG_FILE_NAME_PROPERTY = "configfile";
 	private static final String DEFAULT_CONFIG_FILE = "defaultconfig.properties";
 
 	private static final Logger logger = LoggerFactory.getLogger(PhonebookApplication.class);

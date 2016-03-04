@@ -13,7 +13,6 @@ public class SqlStorageProperties {
 	private String password;
 
 	public String getDriver() {
-		System.out.println("driver=" + driver);
 		return driver;
 	}
 
@@ -22,7 +21,6 @@ public class SqlStorageProperties {
 	}
 
 	public String getUrl() {
-		System.out.println("url=" + url);
 		return url;
 	}
 
@@ -31,7 +29,6 @@ public class SqlStorageProperties {
 	}
 
 	public String getUser() {
-		System.out.println("user=" + user);
 		return user;
 	}
 
@@ -40,7 +37,6 @@ public class SqlStorageProperties {
 	}
 
 	public String getPassword() {
-		System.out.println("password=" + password);
 		return password;
 	}
 
