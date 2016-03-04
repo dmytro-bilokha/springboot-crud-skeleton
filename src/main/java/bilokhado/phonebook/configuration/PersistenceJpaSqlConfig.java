@@ -3,16 +3,21 @@ package bilokhado.phonebook.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.annotation.PostConstruct;
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
 
 import org.eclipse.persistence.config.PersistenceUnitProperties;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.autoconfigure.orm.jpa.JpaBaseConfiguration;
 import org.springframework.boot.orm.jpa.EntityManagerFactoryBuilder;
 import org.springframework.boot.orm.jpa.EntityScan;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Import;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -23,12 +28,24 @@ import org.springframework.orm.jpa.vendor.EclipseLinkJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import bilokhado.phonebook.configuration.properties.SqlStorageProperties;
+
 @Configuration
+//@ComponentScan("bilokhado.phonebook.configuration.properties")
 @EnableTransactionManagement
-@EntityScan("bilokhado.phonebook.entity")
+@EntityScan({"bilokhado.phonebook.entity"})
 @ConditionalOnProperty(prefix = "db", value = "type", havingValue = "SQL")
 public class PersistenceJpaSqlConfig extends JpaBaseConfiguration {
 
+	@Autowired
+	SqlStorageProperties properties;
+
+	@Value("${db.sql.driver}")
+	private String driver;
+	
+	@Value("${db.type}")
+	private String type;
+	
 	@Bean
 	@Override
 	public LocalContainerEntityManagerFactoryBean entityManagerFactory(EntityManagerFactoryBuilder factoryBuilder) {
@@ -41,10 +58,16 @@ public class PersistenceJpaSqlConfig extends JpaBaseConfiguration {
 
 	@Bean
 	public DataSource dataSource() {
+		System.out.println("DATASOURCE called");
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
+		System.out.println(driver);
+		System.out.println(type);
 		dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+		System.out.println(properties.getUrl());
 		dataSource.setUrl("jdbc:mysql://localhost:3306/phonebook");
+		System.out.println(properties.getUser());
 		dataSource.setUsername("www");
+		System.out.println(properties.getPassword());
 		dataSource.setPassword("world-wide-wlak");
 		return dataSource;
 	}
@@ -74,7 +97,7 @@ public class PersistenceJpaSqlConfig extends JpaBaseConfiguration {
 	@Override
 	protected Map<String, Object> getVendorProperties() {
 		Map<String, Object> vendorProperties = new HashMap<>();
-		//Disable JPA BeanValidation, we validate by controller
+		// Disable JPA BeanValidation, we validate by controller
 		vendorProperties.put(PersistenceUnitProperties.VALIDATION_MODE, "NONE");
 		vendorProperties.put(PersistenceUnitProperties.WEAVING, detectWeavingMode());
 		vendorProperties.put(PersistenceUnitProperties.SCHEMA_GENERATION_DATABASE_ACTION, "drop-and-create");
@@ -89,4 +112,9 @@ public class PersistenceJpaSqlConfig extends JpaBaseConfiguration {
 	private String detectWeavingMode() {
 		return InstrumentationLoadTimeWeaver.isInstrumentationAvailable() ? "true" : "static";
 	}
+	
+	@PostConstruct
+    public void postConstruct() {
+        System.out.print("SampleApplication started: " + driver +" " + type);
+    }
 }

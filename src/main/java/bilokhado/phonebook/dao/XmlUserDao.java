@@ -78,7 +78,7 @@ public class XmlUserDao implements UserDao {
 					BufferedOutputStream bufOutStream = new BufferedOutputStream(outStream);) {
 				JAXBContext context = JAXBContext.newInstance(XmlUsersWrapper.class);
 				Marshaller marshaller = context.createMarshaller();
-				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+				marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, properties.isFormatted());
 				marshaller.marshal(xmlUsersWrapper, bufOutStream);
 			} catch (JAXBException ex) {
 				logger.error("Failed to marshallize users to XML file {}", outputFileName, ex);
