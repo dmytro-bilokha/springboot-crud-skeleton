@@ -63,7 +63,7 @@ file.
 
 ## TODO
 
-* Add users ability to store some date (phonebook for example).
+* Add users ability to store some data (phonebook for example).
 
 * Add functionality for viewing and filtering phonebook entries.
 
